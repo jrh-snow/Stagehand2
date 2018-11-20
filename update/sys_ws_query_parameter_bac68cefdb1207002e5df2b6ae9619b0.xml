@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?><record_update table="sys_ws_query_parameter">
+    <sys_ws_query_parameter action="INSERT_OR_UPDATE">
+        <example_value/>
+        <name>job_id</name>
+        <required>false</required>
+        <short_description/>
+        <sys_class_name>sys_ws_query_parameter</sys_class_name>
+        <sys_created_by>darrin.achtman@snc</sys_created_by>
+        <sys_created_on>2017-11-13 20:04:46</sys_created_on>
+        <sys_id>bac68cefdb1207002e5df2b6ae9619b0</sys_id>
+        <sys_mod_count>1</sys_mod_count>
+        <sys_name>job_id</sys_name>
+        <sys_package display_value="Stagehand 2" source="x_pisn_stagehand">798fc70adb742340b9e331d0ef961904</sys_package>
+        <sys_policy/>
+        <sys_scope display_value="Stagehand 2">798fc70adb742340b9e331d0ef961904</sys_scope>
+        <sys_update_name>sys_ws_query_parameter_bac68cefdb1207002e5df2b6ae9619b0</sys_update_name>
+        <sys_updated_by>darrin.achtman@snc</sys_updated_by>
+        <sys_updated_on>2018-09-28 21:53:23</sys_updated_on>
+        <web_service_definition display_value="Stagehand Web Service">6b7fc9eedb9683002e5df2b6ae961936</web_service_definition>
+    </sys_ws_query_parameter>
+</record_update>

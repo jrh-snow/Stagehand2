@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?><record_update table="sys_ws_operation">
+    <sys_ws_operation action="INSERT_OR_UPDATE">
+        <active>true</active>
+        <consumes>application/json,application/xml,text/xml</consumes>
+        <consumes_customized>false</consumes_customized>
+        <default_operation_uri/>
+        <enforce_acl/>
+        <http_method>PUT</http_method>
+        <name>Reset Stage For Persona</name>
+        <operation_script><![CDATA[(function process(/*RESTAPIRequest*/ request, /*RESTAPIResponse*/ response) {
+	var userName = request.queryParams.user_name + "";
+	var definitionID = request.queryParams.definition_id + "";
+	var personaUserName = request.queryParams.persona_user_name + "";
+	var initData = request.body.data;
+	
+	var helper = new x_pisn_stagehand.Helper(definitionID,userName);
+	var instanceID = helper.createStage(initData);
+	var stage = helper.getStage(instanceID);
+	stage.personas = stage.personas.filter(function(persona){
+		return persona.user_id === initPersona;
+	});
+})(request, response);]]></operation_script>
+        <operation_uri>/api/x_pisn_stagehand/service/resetstageforpersona</operation_uri>
+        <produces>application/json,application/xml,text/xml</produces>
+        <produces_customized>false</produces_customized>
+        <relative_path>/resetstageforpersona</relative_path>
+        <request_example/>
+        <requires_acl_authorization>false</requires_acl_authorization>
+        <requires_authentication>false</requires_authentication>
+        <requires_snc_internal_role>false</requires_snc_internal_role>
+        <short_description/>
+        <sys_class_name>sys_ws_operation</sys_class_name>
+        <sys_created_by>darrin.achtman@snc</sys_created_by>
+        <sys_created_on>2017-11-13 20:22:27</sys_created_on>
+        <sys_id>e7774423db5207002e5df2b6ae961976</sys_id>
+        <sys_mod_count>3</sys_mod_count>
+        <sys_name>Reset Stage For Persona</sys_name>
+        <sys_package display_value="Stagehand 2" source="x_pisn_stagehand">798fc70adb742340b9e331d0ef961904</sys_package>
+        <sys_policy/>
+        <sys_scope display_value="Stagehand 2">798fc70adb742340b9e331d0ef961904</sys_scope>
+        <sys_update_name>sys_ws_operation_e7774423db5207002e5df2b6ae961976</sys_update_name>
+        <sys_updated_by>darrin.achtman@snc</sys_updated_by>
+        <sys_updated_on>2018-09-28 21:53:24</sys_updated_on>
+        <web_service_definition display_value="Stagehand Web Service">6b7fc9eedb9683002e5df2b6ae961936</web_service_definition>
+        <web_service_version/>
+    </sys_ws_operation>
+</record_update>

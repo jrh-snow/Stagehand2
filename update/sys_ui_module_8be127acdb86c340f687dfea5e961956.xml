@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?><record_update sys_domain="global" table="sys_ui_module">
+    <sys_ui_module action="INSERT_OR_UPDATE">
+        <active>true</active>
+        <application display_value="">f86b2bf34fc11200e3d8a3618110c7ab</application>
+        <filter/>
+        <name>Delayed Jobs</name>
+        <order/>
+        <path/>
+        <path_relative_to_root>false</path_relative_to_root>
+        <roles>public</roles>
+        <sys_class_name>sys_ui_module</sys_class_name>
+        <sys_created_by>darrin.achtman@snc</sys_created_by>
+        <sys_created_on>2017-10-23 18:03:27</sys_created_on>
+        <sys_domain>global</sys_domain>
+        <sys_domain_path>/</sys_domain_path>
+        <sys_id>8be127acdb86c340f687dfea5e961956</sys_id>
+        <sys_mod_count>1</sys_mod_count>
+        <sys_name>Delayed Jobs</sys_name>
+        <sys_package display_value="Stagehand 2" source="x_pisn_stagehand">798fc70adb742340b9e331d0ef961904</sys_package>
+        <sys_policy/>
+        <sys_scope display_value="Stagehand 2">798fc70adb742340b9e331d0ef961904</sys_scope>
+        <sys_update_name>sys_ui_module_8be127acdb86c340f687dfea5e961956</sys_update_name>
+        <sys_updated_by>darrin.achtman@snc</sys_updated_by>
+        <sys_updated_on>2018-09-28 21:53:21</sys_updated_on>
+        <table>x_pisn_stagehand_delayed_job</table>
+        <uncancelable>false</uncancelable>
+        <view_name/>
+    </sys_ui_module>
+</record_update>

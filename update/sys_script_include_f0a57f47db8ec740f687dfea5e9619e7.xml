@@ -1,0 +1,578 @@
+<?xml version="1.0" encoding="UTF-8"?><record_update table="sys_script_include">
+    <sys_script_include action="INSERT_OR_UPDATE">
+        <access>public</access>
+        <active>true</active>
+        <api_name>x_pisn_stagehand.Helper</api_name>
+        <client_callable>false</client_callable>
+        <description/>
+        <name>Helper</name>
+        <script><![CDATA[var Helper = Class.create();
+Helper.prototype = {
+	prefix : "x_pisn_stagehand",
+	initialize : function (definitionID, userName) {
+		this.json = new global.JSON();
+		this.evaluator = GlideScopedEvaluator;
+		this.attachment = new GlideSysAttachment();
+		this.recordMaint = new global.StagehandGlobalHelper();
+		
+		this.definition_id = definitionID || false;
+		this.user_name = userName || gs.getUserName();
+		this.debug = false;
+		this.tables = {
+			definition : this.prefix + "_definition",
+			delayed_job : this.prefix + "_delayed_job",
+			instance : this.prefix + "_instance",
+			job : this.prefix + "_job",
+			record : this.prefix + "_record",
+			script : this.prefix + "_script"
+		};
+	},
+	setDefinition : function (definitionID){
+		this.definition_id = definitionID;
+	},
+	setUserName : function (userName){
+		this.user_name = userName;
+	},
+	setDebug : function (debugBool){
+		this.debug = debugBool;
+	},
+	logJSON : function (message, functionName){
+		this.log(this.json.encode(message),functionName);
+	},
+	log : function (message, functionName){
+		if(this._getProperty("log",this.debug)){
+			var gdt = new GlideDateTime();
+			gs.info(gdt.getNumericValue() + "\n" + (functionName ? (functionName + ": ") : "") + message);
+		}
+	},
+	copyJob : function (jobID, newParentID){
+		var scope = this;
+		var jobGR = scope._getRecord(scope.tables.job,jobID,"sys_id");
+		if(jobGR){
+			var newName = "Copy of " + jobGR.name;
+			var oldIdentifier = jobGR.identifier.toString();
+			
+			//jobGR.active = false;
+			jobGR.name = newName;
+			
+			if(jobGR.add_to_initdata){
+				jobGR.identifier = "copy_of_" + oldIdentifier;
+			}
+			if(newParentID){
+				jobGR.parent = newParentID;
+			}
+			
+			var newJobID = jobGR.insert();
+			scope._copyRelatedJobs(jobID, newJobID);
+			return newJobID;
+		}
+		return false;
+	},
+	createStage : function (data){
+		var scope = this;
+		var defGR = scope._getDefinition();
+		var scriptRunner = new scope.evaluator();
+		if(defGR.next()){
+			scope.setDebug(defGR.logging);
+			var instanceGR = scope._createInstance();
+			var initData = scriptRunner.evaluateScript(defGR,"initialization_data",{answer:null});
+			var answer = scriptRunner.getVariable("answer");
+			var jobs = scope._getJobs();
+			
+			if(!answer || answer == null){
+				answer = {};
+			}
+			if(data){
+				var dataKeys = Object.keys(data);
+				for(var i = 0; i != dataKeys.length; i++){
+					var key = dataKeys[i];
+					var value = data[key];
+					answer[key] = value;
+				}
+			}
+			scope.processJobs(jobs, instanceGR, answer);
+			return instanceGR.sys_id.toString();
+		}else{
+			scope.log("Invalid definition ID\nID: " + scope.definition_id + "\nNo instance was created");
+			return false;
+		}
+	},
+	getStages : function (){
+		var scope = this;
+		var instances = scope.getMyInstances();
+		var instArray = [];
+		while(instances.next()){
+			instArray.push(scope.getStage(instances.sys_id.toString()));
+		}
+		return instArray;
+	},
+	getStage : function (instanceID){
+		var scope = this;
+		return {
+			sn_url : gs.getProperty("glide.servlet.uri"),
+			personas : scope.getPersonas(instanceID)
+		};
+	},
+	getPersonas : function (instanceID){
+		var scope = this;
+		var personasArray = [];
+		var instanceRecordsGR = scope._getInstanceRecords(instanceID, true);
+		while(instanceRecordsGR.next()){
+			var userRecord = scope._getRecord(instanceRecordsGR.table.toString(), instanceRecordsGR.record.toString(), "sys_id");
+			personasArray.push({
+				user_id : instanceRecordsGR.user_id.toString(),
+				password : instanceRecordsGR.password.toString(),
+				name : userRecord ? userRecord.getDisplayValue() : "Unable to fetch name. Persona may have been an erroneous duplicate"
+			});
+		}
+		return personasArray;
+	},
+	executeDelayedJob : function (jobID){
+		var scope = this;
+		var delayedJobs = this._getMyDelayedJobs(jobID);
+		while(delayedJobs.next()){
+			scope.executeDelayedJobInstance(delayedJobs.sys_id.toString());
+		}
+	},
+	executeDelayedJobInstance : function (delayedJobID){
+		var scope = this;
+		var delayedJobGR = scope._getRecord(scope.tables.delayed_job,delayedJobID,"sys_id");
+		if(delayedJobGR){
+			var jobGR = delayedJobGR.job;
+			var instanceGR = delayedJobGR.instance;
+			var initData = scope._decodeInitData(delayedJobGR.initialization_data.toString());
+			var parentGR = delayedJobGR.parent_record.nil() ? false : scope._getRecord(delayedJobGR.parent_record_table.toString(),delayedJobGR.parent_record.toString());
+			var recordGR = delayedJobGR.record.nil() ? false : delayedJobGR.record;
+			scope.processJob(jobGR, instanceGR, initData, parentGR, recordGR);
+			
+			delayedJobGR.triggered = true;
+			delayedJobGR.update();
+			return true;
+		}
+		return false;
+	},
+	processJobs : function (jobs, instanceGR, initData, parentGR){
+		var scope = this;
+		while(jobs.next()){
+			if(jobs.delay_job){
+				scope.processDelayedJob(jobs, instanceGR, initData, parentGR);
+			}else{
+				scope.processJob(jobs, instanceGR, initData, parentGR);
+			}
+		}
+	},
+	processJob : function (jobGR, instanceGR, initData, parentGR, instanceRecordGR){
+		var scope = this;
+		var childJobs = scope._getJobs(jobGR.sys_id.toString());
+		var setSystemFields = jobGR.set_system_fields.toString() == "true";
+		var runBusRules = jobGR.run_business_rules.toString() == "true";
+		var table = jobGR.table.toString();
+		var fieldValueMap = scope._mapFieldValues(jobGR.set_field_values.toString(), initData, parentGR, instanceGR);
+		var dataResult;
+		switch(jobGR.type.toString()){
+			case "create_data":
+				dataResult = scope._createRecord(table,fieldValueMap,runBusRules,setSystemFields);
+				break;
+			case "create_user":
+				if(!fieldValueMap.user_password){
+					fieldValueMap.user_password = "password";
+				}
+				dataResult = scope._upsertRecord(table,"user_name",fieldValueMap,runBusRules,setSystemFields);
+				break;	
+			case "script":
+				var scriptRunner = new scope.evaluator();
+				try{
+					dataResult = scriptRunner.evaluateScript(jobGR,"script",{
+						initData : initData,
+						parent : parentGR,
+						insertStageRecord : function (parentScope, record){
+							parentScope._createInstanceRecord(instanceGR,jobGR,record);
+						}
+					});
+					initData = scriptRunner.getVariable("initData");
+					scope.log("Job Script completed with return value\n" + dataResult,"processJob");
+				}
+				catch(e){
+					scope.log("Error processing javascript for Stage Job\n" + jobGR.getDisplayValue() + "\n" + e,"processJob");
+				}
+				break;
+			default:
+				scope.log("No actions have been defined for type " + jobGR.type + ". Maybe you want to create one in the Helper script include?","processJob");
+				break;
+		}
+		if(dataResult.isValid()){
+			scope.log("Successfully created a new record " + dataResult.getDisplayValue(),"processJob");
+			if(jobGR.add_to_initdata){
+				initData[jobGR.identifier.toString()] = dataResult;
+			}
+			if(jobGR.photo.getDisplayValue() !== ""){
+				scope.attachment.copy(jobGR.getTableName(),jobGR.sys_id.toString(),dataResult.getTableName(),dataResult.sys_id.toString());
+			}
+			if(dataResult.getTableName() == "sys_user"){
+				scope._grantRoles(dataResult, jobGR.roles.toString().split(","), instanceGR, jobGR);
+				scope._grantGroups(dataResult, jobGR.groups.toString().split(","), instanceGR, jobGR);
+			}
+			if(dataResult.temporalAction != "update"){
+				scope._createInstanceRecord(instanceGR, jobGR, dataResult);
+			}else{
+				scope._updateInstanceRecord(instanceGR, jobGR, dataResult);
+			}
+		}
+		scope.processJobs(childJobs, instanceGR, initData, dataResult);
+	},
+	processDelayedJob : function (jobGR, instanceGR, initData, parentGR){
+		var scope = this;
+		var delayedJobObject = {
+			initialization_data : scope._encodeInitData(initData),
+			instance : instanceGR.sys_id.toString(),
+			job : jobGR.sys_id.toString(),
+			parent_record : parentGR ? parentGR.sys_id.toString() : "",
+			parent_record_table : parentGR ? parentGR.getTableName(): ""
+		};
+		var delayedJob =  scope._createRecord(scope.tables.delayed_job,delayedJobObject,true,true);
+		if(delayedJob.job.when_to_occur == "x_minutes_after"){
+			var trigger = scope._createTrigger(delayedJob);
+			var triggerInstanceRecord = scope._createInstanceRecord(instanceGR, jobGR, trigger);
+			scope._upsertRecord(scope.tables.delayed_job, "sys_id", {
+				sys_id : delayedJob.sys_id.toString(),
+				record : triggerInstanceRecord.sys_id.toString()
+			});
+		}
+		return delayedJob;
+	},
+	cleanInstance : function (reset, instanceID){
+		var scope = this;
+		var instanceGR = scope._getInstance(instanceID);
+		if(instanceGR.next()){
+			instanceID = instanceGR.sys_id.toString();
+			var records = scope._getInstanceRecords(instanceGR);
+			var delayedJobs = scope._getDelayedJobs(instanceGR);
+			var onDestroyJobs = scope._getDelayedJobs(instanceGR, "on_stage_destroy");
+			while(onDestroyJobs.next()){
+				scope.executeDelayedJobInstance(onDestroyJobs.sys_id.toString());
+			}
+			while(records.next()){
+				if(reset && records.job.type.toString() == "create_user"){
+					//DO NOTHING
+				}else{
+					scope._destroyRecord(records);
+				}
+			}
+			while(delayedJobs.next()){
+				delayedJobs.deleteRecord();
+			}
+			instanceGR.deleteRecord();
+			scope.log("Successfully deleted the stagehand instance " + instanceID);
+			return "SUCCESS";
+		}else{
+			scope.log("No stagehand instance was deleted");
+			return "FAILURE";
+		}
+	},
+	_createInstanceRecord : function (instanceGR, jobGR, recordGR, isPersona){
+		var scope = this;
+		var recordObject = {
+			instance : instanceGR.sys_id.toString(),
+			job : jobGR.sys_id.toString(),
+			table : recordGR.getTableName(),
+			record : recordGR.sys_id.toString(),
+			is_persona : typeof isPersona == "boolean" ? isPersona : jobGR.is_persona.toString() == "true"
+		};
+		if(recordObject.is_persona && recordGR.getTableName() == "sys_user"){
+			recordObject.user_id = recordGR.user_name.toString();
+			recordObject.password = recordGR.temporalPassword.toString();
+		}
+		return scope._createRecord(scope.tables.record,recordObject);
+	},
+	_updateInstanceRecord : function (instanceGR, jobGR, recordGR){
+		scope = this;
+		return scope._upsertRecord(scope.tables.record,"record",{
+			record : recordGR.sys_id.toString(),
+			instance : instanceGR.sys_id.toString(),
+			job : jobGR.sys_id.toString()
+		});
+	},
+	_createInstance : function (){
+		var scope = this;
+		scope.cleanInstance(true);
+		return scope._createRecord(scope.tables.instance, {
+			definition : scope.definition_id,
+			initiated_by : scope.user_name
+		});
+	},
+	_createTrigger : function (delayedJobGR){
+		var scope = this;
+		var delaySeconds = parseInt(delayedJobGR.job.minutes * 60);
+		var triggerTime = new GlideDateTime();
+		triggerTime.addSeconds(delaySeconds);
+		return scope._createRecord("sys_trigger",{
+			job_id : "RunScriptJob",
+			name : "Stagehand Delayed Job: " + delayedJobGR.job.getDisplayValue(),
+			next_action : triggerTime,
+			state : 0,
+			trigger_type : 0,
+			script : "var helper = new x_pisn_stagehand.Helper(\"" + delayedJobGR.job.definition.sys_id.toString() + "\");\nhelper.executeDelayedJobInstance(\"" + delayedJobGR.sys_id.toString() + "\")"
+		});
+	},
+	_createRecord : function (tableName, recordDetails, runBusRules, setSysFields){
+		return this.recordMaint.create(tableName, recordDetails, runBusRules, setSysFields);
+	},
+	_copyRelatedJobs : function (oldJobID, newJobID){
+		var scope = this;
+		var childJobs = scope._getJobs(oldJobID);
+		while(childJobs.next()){
+			scope.copyJob(childJobs.sys_id.toString(),newJobID);
+		}
+		return true;
+	},
+	_grantRoles : function (userRecord, roles, instanceGR, jobGR){
+		var scope = this;
+		for(var i = 0; i != roles.length; i++){
+			var role = roles[i];
+			if(role != ""){
+				var newRole = scope._grantRole(userRecord.sys_id.toString(), role);
+				if(newRole.temporalAction == "update"){
+					scope._updateInstanceRecord(instanceGR, jobGR, newRole);
+				}else{
+					scope._createInstanceRecord(instanceGR, jobGR, newRole, false);
+				}
+			}
+		}
+	},
+	_grantGroups : function (userRecord, groups, instanceGR, jobGR){
+		var scope = this;
+		for(var i = 0; i != groups.length; i++){
+			var group = groups[i];
+			if(group != ""){
+				var newMember = scope._grantGroup(userRecord.sys_id.toString(), group);
+				if(newMember.temporalAction == "update"){
+					scope._updateInstanceRecord(instanceGR, jobGR, newMember);
+				}else{
+					scope._createInstanceRecord(instanceGR, jobGR, newMember, false);
+				}
+			}
+		}
+	},
+	_grantRole : function (userID, roleID){
+		var scope = this;
+		var hasRoleGR = new GlideRecord("sys_user_has_role");
+		hasRoleGR.addQuery("user", userID);
+		hasRoleGR.addQuery("role", roleID);
+		hasRoleGR.query();
+		if (hasRoleGR.next()) {
+			hasRoleGR.active = true;
+			hasRoleGR.update();
+			hasRoleGR.temporalAction = "update";
+			return hasRoleGR;
+		}
+		else{
+			return scope._createRecord("sys_user_has_role",{
+				user : userID,
+				role : roleID,
+				active : true
+			});
+		}
+	},
+	_grantGroup : function (userID, groupID){
+		var scope = this;
+		var groupMemberGR = new GlideRecord("sys_user_grmember");
+		groupMemberGR.addQuery("user", userID);
+		groupMemberGR.addQuery("group", groupID);
+		groupMemberGR.query();
+		if (!groupMemberGR.hasNext()){
+			return scope._createRecord("sys_user_grmember",{
+				user : userID,
+				group : groupID
+			});
+		}else{
+			groupMemberGR.next();
+			groupMemberGR.temporalAction = "update";
+			return groupMemberGR;
+		}
+	},
+	_getProperty : function (suffix, alternate){
+		var property = this.prefix + "." + suffix;
+		return gs.getProperty(property, alternate);
+	},
+	_getRecord : function (tableName, recordID, fieldName){
+		var recordGR = new GlideRecord(tableName);
+		if(recordGR.get(fieldName || "sys_id", recordID)){
+			return recordGR;
+		}
+		return false;
+	},
+	_getDefinition : function (){
+		var scope = this;
+		var defGR = new GlideRecord(this.tables.definition);
+		defGR.addActiveQuery();
+		defGR.addQuery("sys_id",scope.definition_id);
+		defGR.query();
+		return defGR;
+	},
+	getMyInstances : function(){
+		return this._getInstance();
+	},
+	_getInstance : function (instanceID){
+		var scope = this;
+		var instanceGR = new GlideRecord(scope.tables.instance);
+		if(instanceID){
+			instanceGR.addQuery("sys_id",instanceID);
+		}else{
+			instanceGR.addQuery("initiated_by",scope.user_name);
+			instanceGR.addQuery("definition",scope.definition_id);
+		}
+		instanceGR.query();
+		return instanceGR;
+	},
+	_getInstanceRecords : function (instanceGR, getPersonas){
+		var scope = this;
+		var instanceID = instanceGR.sys_id ? instanceGR.sys_id.toString() : instanceGR.toString();
+		var instanceRecordsGR = new GlideRecord(scope.tables.record);
+		instanceRecordsGR.orderBy("sys_created_on");
+		instanceRecordsGR.addQuery("instance",instanceID);
+		if(getPersonas){
+			instanceRecordsGR.addQuery("is_persona",true);
+		}
+		instanceRecordsGR.query();
+		return instanceRecordsGR;
+	},
+	_getMyDelayedJobs : function (jobGR, whenToOccur){
+		var scope = this;
+		var jobID = jobGR.sys_id ? jobGR.sys_id.toString() : jobGR.toString();
+		var delayedJobsGR = new GlideRecord(scope.tables.delayed_job);
+		delayedJobsGR.orderBy("sys_created_on");
+		delayedJobsGR.addQuery("job",jobID);
+		delayedJobsGR.addQuery("instance.initiated_by",scope.user_name);
+		if(whenToOccur){
+			delayedJobsGR.addQuery("job.when_to_occur",whenToOccur);
+		}
+		delayedJobsGR.query();
+		return delayedJobsGR;
+	},
+	_getDelayedJobs : function (instanceGR, whenToOccur){
+		var scope = this;
+		var delayedJobsGR = new GlideRecord(scope.tables.delayed_job);
+		delayedJobsGR.orderBy("sys_created_on");
+		delayedJobsGR.addQuery("instance",instanceGR.sys_id.toString());
+		if(whenToOccur){
+			delayedJobsGR.addQuery("job.when_to_occur",whenToOccur);
+		}
+		delayedJobsGR.query();
+		return delayedJobsGR;
+	},
+	_getJobs : function (searchID){
+		var scope = this;
+		var fieldName = "parent";
+		var nullFieldName = "definition";
+		if(!searchID){
+			fieldName = "definition";
+			nullFieldName = "parent";
+			searchID = scope.definition_id;
+		}
+		var jobGR = new GlideRecord(this.tables.job);
+		jobGR.addActiveQuery();
+		jobGR.orderBy("order");
+		jobGR.addNullQuery(nullFieldName);
+		jobGR.addQuery(fieldName,searchID);
+		jobGR.addQuery(fieldName + ".active",true);
+		jobGR.query();
+		return jobGR;
+	},
+	_mapFieldValues : function (values, initData, parent, instanceGR){
+		var scope = this;
+		var fieldValueMap = {};
+		var fieldValues = values.toString().split('EQ')[0].split('^');
+		for(var i = 0; i != fieldValues.length; i++){
+			var fieldValue = fieldValues[i];
+			if(fieldValue !== ""){
+				fieldValue = fieldValue.split("=");
+				var name = fieldValue[0];
+				var value = fieldValue[1];
+				if(value.indexOf("javascript") === 0){
+					value = scope._eval(value.split("javascript:")[1], initData, parent, instanceGR);
+				}
+				fieldValueMap[name] = value;
+			}
+		}
+		return fieldValueMap;
+	},
+	_eval : function (script, initData, parent, instanceGR){
+		var scope = this;
+		var scriptRunner = new scope.evaluator();
+		var scriptGR = new GlideRecord(scope.tables.script);
+		scriptGR.initialize();
+		scriptGR.instance = instanceGR.sys_id.toString();
+		scriptGR.setValue("script",script.toString());
+		scriptGR.insert();
+		try{
+			scriptRunner.putVariable("initData", initData);
+			scriptRunner.putVariable("parent", parent);
+			var result = scriptRunner.evaluateScript(scriptGR, 'script');
+			return result;
+		}
+		catch(e){
+			scope.log(e);
+		}
+	},
+	destroyInstance : function (instanceID){
+		return this.cleanInstance(false,instanceID);
+	},
+	_destroyRecord : function (recordGR){
+		var scope = this;
+		var setSystemFields = recordGR.job.set_system_fields.toString() == "true";
+		var runBusRules = recordGR.job.run_business_rules.toString() == "true";
+		var destroyedRecord = scope.recordMaint.remove(recordGR.table.toString(), recordGR.record.toString(), runBusRules, setSystemFields);
+		if(!scope._getRecord(recordGR.table.toString(),recordGR.record.toString())){
+			recordGR.deleteRecord();
+		}
+	},
+	_upsertRecord : function (tableName,searchField,recordDetails,runBusRules,setSystemFields){
+		return this.recordMaint.update(tableName, searchField, recordDetails, runBusRules, setSystemFields);
+	},
+	_encodeInitData : function (initData){
+		var scope = this;
+		var newInitData = {};
+		var keys = Object.keys(initData);
+		for(var i = 0; i != keys.length; i++){
+			var key = keys[i];
+			var item = initData[key];
+			if(item.sys_id && item.getTableName){
+				newInitData[key] = {
+					sys_id : item.sys_id.toString(),
+					table : item.getTableName()
+				};
+			}else{
+				newInitData[key] = item;
+			}
+		}
+		return scope.json.encode(newInitData);
+	},
+	_decodeInitData : function (initData){
+		var scope = this;
+		var newInitData = scope.json.decode(initData);
+		var keys = Object.keys(newInitData);
+		for(var i = 0; i != keys.length; i++){
+			var key = keys[i];
+			var item = newInitData[key];
+			if(item.sys_id && item.table){
+				newInitData[key] = scope._getRecord(item.table,item.sys_id,"sys_id");
+			}
+		}
+		return newInitData;
+	},
+	type : 'Helper'
+};]]></script>
+        <sys_class_name>sys_script_include</sys_class_name>
+        <sys_created_by>darrin.achtman@snc</sys_created_by>
+        <sys_created_on>2017-10-31 14:04:48</sys_created_on>
+        <sys_id>f0a57f47db8ec740f687dfea5e9619e7</sys_id>
+        <sys_mod_count>136</sys_mod_count>
+        <sys_name>Helper</sys_name>
+        <sys_package display_value="Stagehand 2" source="x_pisn_stagehand">798fc70adb742340b9e331d0ef961904</sys_package>
+        <sys_policy>read</sys_policy>
+        <sys_scope display_value="Stagehand 2">798fc70adb742340b9e331d0ef961904</sys_scope>
+        <sys_update_name>sys_script_include_f0a57f47db8ec740f687dfea5e9619e7</sys_update_name>
+        <sys_updated_by>darrin.achtman@snc</sys_updated_by>
+        <sys_updated_on>2018-09-28 21:53:25</sys_updated_on>
+    </sys_script_include>
+</record_update>

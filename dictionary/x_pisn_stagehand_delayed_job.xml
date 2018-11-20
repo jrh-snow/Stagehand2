@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?><database>
+    <element label="Delayed Job" max_length="40" name="x_pisn_stagehand_delayed_job" type="collection">
+        <element label="Initialization Data" max_length="8000" name="initialization_data" read_only="true" type="string"/>
+        <element attributes="edge_encryption_enabled=true" label="instance" max_length="32" name="instance" read_only="true" reference="x_pisn_stagehand_instance" type="reference"/>
+        <element attributes="edge_encryption_enabled=true" label="Job" max_length="32" name="job" read_only="true" reference="x_pisn_stagehand_job" type="reference"/>
+        <element attributes="ignore_filter_on_new=true" default="javascript:global.getNextObjNumberPadded();" display="true" label="Number" max_length="40" name="number" read_only="true" type="string"/>
+        <element attributes="edge_encryption_enabled=true" dependent="parent_record_table" dependent_on_field="parent_record_table" label="Parent record" max_length="32" name="parent_record" read_only="true" type="document_id" use_dependent_field="true"/>
+        <element attributes="base_start=true,edge_encryption_enabled=true" label="Parent record table" max_length="80" name="parent_record_table" read_only="true" type="table_name"/>
+        <element attributes="edge_encryption_enabled=true" label="Record" max_length="32" name="record" read_only="true" reference="x_pisn_stagehand_record" type="reference"/>
+        <element attributes="edge_encryption_enabled=true" label="Triggered" max_length="40" name="triggered" type="boolean"/>
+        <index name="index">
+            <element name="instance"/>
+        </index>
+        <index name="index2">
+            <element name="record"/>
+        </index>
+        <index name="index3">
+            <element name="job"/>
+        </index>
+        <index name="index4">
+            <element name="parent_record"/>
+        </index>
+    </element>
+</database>

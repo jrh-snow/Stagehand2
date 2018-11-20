@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?><database>
+    <element label="Job" max_length="40" name="x_pisn_stagehand_job" type="collection">
+        <element attributes="edge_encryption_enabled=true" default="true" label="Active" max_length="40" name="active" type="boolean"/>
+        <element attributes="edge_encryption_enabled=true" label="Add to initData" max_length="40" name="add_to_initdata" type="boolean"/>
+        <element label="Client" max_length="100" name="client" read_only="true" type="string"/>
+        <element attributes="edge_encryption_enabled=true" label="Definition" max_length="32" name="definition" reference="x_pisn_stagehand_definition" reference_cascade_rule="delete" type="reference"/>
+        <element attributes="edge_encryption_enabled=true" label="Delay Job" max_length="40" name="delay_job" type="boolean"/>
+        <element attributes="no_sort=true,slushbucket_ref_no_expand=true,edge_encryption_enabled=true" label="Groups" max_length="4000" name="groups" reference="sys_user_group" type="glide_list"/>
+        <element hint="(unique, no spaces)" label="Identifier (unique, no spaces)" max_length="40" name="identifier" type="string"/>
+        <element attributes="edge_encryption_enabled=true" label="Is persona" max_length="40" name="is_persona" type="boolean"/>
+        <element attributes="edge_encryption_enabled=true" default="5" label="Minutes" max_length="40" name="minutes" type="integer"/>
+        <element display="true" label="Name" mandatory="true" max_length="100" name="name" type="string"/>
+        <element attributes="ignore_filter_on_new=true" default="javascript:global.getNextObjNumberPadded();" label="Number" max_length="40" name="number" read_only="true" type="string"/>
+        <element attributes="edge_encryption_enabled=true" default="100" label="Order" mandatory="true" max_length="40" name="order" type="integer"/>
+        <element attributes="edge_encryption_enabled=true" label="Parent" max_length="32" name="parent" reference="x_pisn_stagehand_job" reference_cascade_rule="delete" type="reference"/>
+        <element attributes="pdf_cell_type=image,edge_encryption_enabled=true" label="Photo" max_length="40" name="photo" type="user_image"/>
+        <element attributes="no_sort=true,slushbucket_ref_no_expand=true,edge_encryption_enabled=true" label="Roles" max_length="4000" name="roles" reference="sys_user_role" type="glide_list"/>
+        <element attributes="edge_encryption_enabled=true" label="Run business rules" max_length="40" name="run_business_rules" type="boolean"/>
+        <element attributes="edge_encryption_enabled=true" default="/*&#13;&#10;Available variables:&#13;&#10;initData - JSON object provided by the Stagehand Definition record or via REST&#13;&#10;parent - GlideRecord object of the record created in the 'Parent' Stage Job&#13;&#10;&#13;&#10;Notes:&#13;&#10;-You may add content to initData to be used in later Stage Jobs&#13;&#10;-To tie a generated record to the Stage Instance for better tracking, use:&#13;&#10;insertStageRecord(this, [glideRecord/sys_id]);&#13;&#10;*/" label="Script" max_length="8000" name="script" type="script_plain"/>
+        <element label="Server" max_length="1000" name="server" read_only="true" type="string"/>
+        <element attributes="edge_encryption_enabled=true" dependent="table" dependent_on_field="table" label="Set field values" max_length="65000" name="set_field_values" type="template_value" use_dependent_field="true"/>
+        <element attributes="edge_encryption_enabled=true" label="Set system fields" max_length="40" name="set_system_fields" type="boolean"/>
+        <element attributes="base_start=true,edge_encryption_enabled=true" label="Table" max_length="80" name="table" type="table_name"/>
+        <element attributes="edge_encryption_enabled=true" choice="3" default="create_data" label="Type" mandatory="true" max_length="40" name="type" type="choice">
+            <choice>
+                <element inactive_on_update="false" label="Create Data" sequence="0" value="create_data"/>
+                <element inactive_on_update="false" label="Create User" sequence="1" value="create_user"/>
+                <element inactive_on_update="false" label="Script" sequence="2" value="script"/>
+            </choice>
+        </element>
+        <element attributes="edge_encryption_enabled=true" choice="3" default="on_demand" label="When to Occur" max_length="40" name="when_to_occur" type="choice">
+            <choice>
+                <element inactive_on_update="false" label="On Demand (via REST or Function Call)" sequence="0" value="on_demand"/>
+                <element inactive_on_update="false" label="X Minutes After Stage Instantiation" sequence="1" value="x_minutes_after"/>
+                <element inactive_on_update="false" label="On Stage Destroy" sequence="2" value="on_stage_destroy"/>
+            </choice>
+        </element>
+        <index name="index">
+            <element name="parent"/>
+        </index>
+        <index name="index2">
+            <element name="definition"/>
+        </index>
+    </element>
+</database>

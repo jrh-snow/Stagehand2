@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?><database>
+    <element label="Definition" max_length="40" name="x_pisn_stagehand_definition" type="collection">
+        <element attributes="edge_encryption_enabled=true" default="true" label="Active" max_length="40" name="active" type="boolean"/>
+        <element attributes="edge_encryption_enabled=true" default="/*&#13;&#10;Set 'answer' equal to a JSON formatted object containing initialization data.&#13;&#10;This can also be passed via the REST payload if using the Stagehand REST API.&#13;&#10;&#13;&#10;Ex:&#13;&#10;answer = {&#13;&#10;&#9;&quot;user_id&quot;:gs.getUserID()&#13;&#10;};&#13;&#10;*/" label="Initialization Data" max_length="8000" name="initialization_data" type="script_plain"/>
+        <element attributes="edge_encryption_enabled=true" label="Logging" max_length="40" name="logging" type="boolean"/>
+        <element display="true" label="Name" mandatory="true" max_length="100" name="name" type="string"/>
+        <element attributes="ignore_filter_on_new=true" default="javascript:global.getNextObjNumberPadded();" label="Number" max_length="40" name="number" read_only="true" type="string"/>
+    </element>
+</database>

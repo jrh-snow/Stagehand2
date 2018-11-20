@@ -1,0 +1,250 @@
+<?xml version="1.0" encoding="UTF-8"?><record_update>
+    <sys_ui_section caption="" section_id="2d179fe4db86c340f687dfea5e96194e" sys_domain="global" table="x_pisn_stagehand_job" version="3" view="">
+        <sys_ui_annotation action="INSERT_OR_UPDATE">
+            <is_plain_text>false</is_plain_text>
+            <sys_created_by>darrin.achtman@snc</sys_created_by>
+            <sys_created_on>2018-02-05 20:04:53</sys_created_on>
+            <sys_id>edac6c6adbcc1b00f687dfea5e9619dd</sys_id>
+            <sys_mod_count>0</sys_mod_count>
+            <sys_updated_by>darrin.achtman@snc</sys_updated_by>
+            <sys_updated_on>2018-02-05 20:04:53</sys_updated_on>
+            <text>A Stage Job represents a piece of work to be done as part of a Stage Definition.&lt;ul&gt;&lt;li&gt;&lt;b&gt;Name&lt;/b&gt;: A descriptive name for this Stage Job.&lt;/li&gt;&lt;li&gt;&lt;b&gt;Type&lt;/b&gt;: The type of work to perform, ranging from data generation to script execution.&lt;/li&gt;&lt;li&gt;&lt;b&gt;Run business rules&lt;/b&gt;: (Create Data/User Only) Determines whether business rules will be run against the generated record on insert.&lt;/li&gt;&lt;li&gt;&lt;b&gt;Set system fields&lt;/b&gt;: (Create Data/User Only) Determines whether system fields (sys_update_on, etc) will be set for the generated record on insert.&lt;/li&gt;&lt;li&gt;&lt;b&gt;Add to initData&lt;/b&gt;: (Create Data/User Only) Add the generated record to the initData object for use in subsequent Stage Jobs. Record fields will be available via 'initData.[identifier].[field]'.&lt;/li&gt;&lt;li&gt;&lt;b&gt;Delay job&lt;/b&gt;: Delaying a job allows it (and all child Jobs) to occur at a later time.&lt;/li&gt;&lt;li&gt;&lt;b&gt;Active&lt;/b&gt;: Determines whether this Job is available for use.&lt;/li&gt;&lt;li&gt;&lt;b&gt;Order&lt;/b&gt;: The order (ascending) in which Stage Jobs will be performed.&lt;/li&gt;&lt;li&gt;&lt;b&gt;Stage Definition/Parent&lt;/b&gt;: The Stage Definition or Parent to which this Job is a child.&lt;/li&gt;&lt;/ul&gt;&lt;i&gt;Related Lists&lt;/i&gt;&lt;ul&gt;&lt;li&gt;&lt;b&gt;Child Stage Jobs&lt;/b&gt;: Child Stage Jobs execute after the parent and have access to all fields on the parent record, allowing specific determination of parent/child record relationships.&lt;/li&gt;&lt;/ul&gt;</text>
+            <type display_value="Info Box Blue">753f88a80f930000b12e6903cfe01206</type>
+        </sys_ui_annotation>
+        <sys_ui_element action="INSERT_OR_UPDATE">
+            <element>edac6c6adbcc1b00f687dfea5e9619dd</element>
+            <position>0</position>
+            <sys_created_by>darrin.achtman@snc</sys_created_by>
+            <sys_created_on>2018-02-05 20:04:53</sys_created_on>
+            <sys_id>a1ac6c6adbcc1b00f687dfea5e9619de</sys_id>
+            <sys_mod_count>0</sys_mod_count>
+            <sys_ui_formatter/>
+            <sys_ui_section caption="NULL" display_value="" name="x_pisn_stagehand_job" sys_domain="global" view="Default view">2d179fe4db86c340f687dfea5e96194e</sys_ui_section>
+            <sys_updated_by>darrin.achtman@snc</sys_updated_by>
+            <sys_updated_on>2018-02-05 20:04:53</sys_updated_on>
+            <sys_user/>
+            <type>annotation</type>
+        </sys_ui_element>
+        <sys_ui_element action="INSERT_OR_UPDATE">
+            <element>.begin_split</element>
+            <position>1</position>
+            <sys_created_by>darrin.achtman@snc</sys_created_by>
+            <sys_created_on>2018-02-05 20:04:53</sys_created_on>
+            <sys_id>25ac6c6adbcc1b00f687dfea5e9619de</sys_id>
+            <sys_mod_count>0</sys_mod_count>
+            <sys_ui_formatter/>
+            <sys_ui_section caption="NULL" display_value="" name="x_pisn_stagehand_job" sys_domain="global" view="Default view">2d179fe4db86c340f687dfea5e96194e</sys_ui_section>
+            <sys_updated_by>darrin.achtman@snc</sys_updated_by>
+            <sys_updated_on>2018-02-05 20:04:53</sys_updated_on>
+            <sys_user/>
+            <type>.begin_split</type>
+        </sys_ui_element>
+        <sys_ui_element action="INSERT_OR_UPDATE">
+            <element>name</element>
+            <position>2</position>
+            <sys_created_by>darrin.achtman@snc</sys_created_by>
+            <sys_created_on>2018-02-05 20:04:53</sys_created_on>
+            <sys_id>a5ac6c6adbcc1b00f687dfea5e9619de</sys_id>
+            <sys_mod_count>0</sys_mod_count>
+            <sys_ui_formatter/>
+            <sys_ui_section caption="NULL" display_value="" name="x_pisn_stagehand_job" sys_domain="global" view="Default view">2d179fe4db86c340f687dfea5e96194e</sys_ui_section>
+            <sys_updated_by>darrin.achtman@snc</sys_updated_by>
+            <sys_updated_on>2018-02-05 20:04:53</sys_updated_on>
+            <sys_user/>
+            <type/>
+        </sys_ui_element>
+        <sys_ui_element action="INSERT_OR_UPDATE">
+            <element>type</element>
+            <position>3</position>
+            <sys_created_by>darrin.achtman@snc</sys_created_by>
+            <sys_created_on>2018-02-05 20:04:53</sys_created_on>
+            <sys_id>29ac6c6adbcc1b00f687dfea5e9619de</sys_id>
+            <sys_mod_count>0</sys_mod_count>
+            <sys_ui_formatter/>
+            <sys_ui_section caption="NULL" display_value="" name="x_pisn_stagehand_job" sys_domain="global" view="Default view">2d179fe4db86c340f687dfea5e96194e</sys_ui_section>
+            <sys_updated_by>darrin.achtman@snc</sys_updated_by>
+            <sys_updated_on>2018-02-05 20:04:53</sys_updated_on>
+            <sys_user/>
+            <type/>
+        </sys_ui_element>
+        <sys_ui_element action="INSERT_OR_UPDATE">
+            <element>run_business_rules</element>
+            <position>4</position>
+            <sys_created_by>darrin.achtman@snc</sys_created_by>
+            <sys_created_on>2018-02-05 20:04:53</sys_created_on>
+            <sys_id>a9ac6c6adbcc1b00f687dfea5e9619de</sys_id>
+            <sys_mod_count>0</sys_mod_count>
+            <sys_ui_formatter/>
+            <sys_ui_section caption="NULL" display_value="" name="x_pisn_stagehand_job" sys_domain="global" view="Default view">2d179fe4db86c340f687dfea5e96194e</sys_ui_section>
+            <sys_updated_by>darrin.achtman@snc</sys_updated_by>
+            <sys_updated_on>2018-02-05 20:04:53</sys_updated_on>
+            <sys_user/>
+            <type/>
+        </sys_ui_element>
+        <sys_ui_element action="INSERT_OR_UPDATE">
+            <element>set_system_fields</element>
+            <position>5</position>
+            <sys_created_by>darrin.achtman@snc</sys_created_by>
+            <sys_created_on>2018-02-05 20:04:53</sys_created_on>
+            <sys_id>2dac6c6adbcc1b00f687dfea5e9619de</sys_id>
+            <sys_mod_count>0</sys_mod_count>
+            <sys_ui_formatter/>
+            <sys_ui_section caption="NULL" display_value="" name="x_pisn_stagehand_job" sys_domain="global" view="Default view">2d179fe4db86c340f687dfea5e96194e</sys_ui_section>
+            <sys_updated_by>darrin.achtman@snc</sys_updated_by>
+            <sys_updated_on>2018-02-05 20:04:53</sys_updated_on>
+            <sys_user/>
+            <type/>
+        </sys_ui_element>
+        <sys_ui_element action="INSERT_OR_UPDATE">
+            <element>add_to_initdata</element>
+            <position>6</position>
+            <sys_created_by>darrin.achtman@snc</sys_created_by>
+            <sys_created_on>2018-02-05 20:04:53</sys_created_on>
+            <sys_id>adac6c6adbcc1b00f687dfea5e9619de</sys_id>
+            <sys_mod_count>0</sys_mod_count>
+            <sys_ui_formatter/>
+            <sys_ui_section caption="NULL" display_value="" name="x_pisn_stagehand_job" sys_domain="global" view="Default view">2d179fe4db86c340f687dfea5e96194e</sys_ui_section>
+            <sys_updated_by>darrin.achtman@snc</sys_updated_by>
+            <sys_updated_on>2018-02-05 20:04:53</sys_updated_on>
+            <sys_user/>
+            <type/>
+        </sys_ui_element>
+        <sys_ui_element action="INSERT_OR_UPDATE">
+            <element>identifier</element>
+            <position>7</position>
+            <sys_created_by>darrin.achtman@snc</sys_created_by>
+            <sys_created_on>2018-02-05 20:04:53</sys_created_on>
+            <sys_id>21ac6c6adbcc1b00f687dfea5e9619df</sys_id>
+            <sys_mod_count>0</sys_mod_count>
+            <sys_ui_formatter/>
+            <sys_ui_section caption="NULL" display_value="" name="x_pisn_stagehand_job" sys_domain="global" view="Default view">2d179fe4db86c340f687dfea5e96194e</sys_ui_section>
+            <sys_updated_by>darrin.achtman@snc</sys_updated_by>
+            <sys_updated_on>2018-02-05 20:04:53</sys_updated_on>
+            <sys_user/>
+            <type/>
+        </sys_ui_element>
+        <sys_ui_element action="INSERT_OR_UPDATE">
+            <element>delay_job</element>
+            <position>8</position>
+            <sys_created_by>darrin.achtman@snc</sys_created_by>
+            <sys_created_on>2018-02-05 20:04:53</sys_created_on>
+            <sys_id>a1ac6c6adbcc1b00f687dfea5e9619df</sys_id>
+            <sys_mod_count>0</sys_mod_count>
+            <sys_ui_formatter/>
+            <sys_ui_section caption="NULL" display_value="" name="x_pisn_stagehand_job" sys_domain="global" view="Default view">2d179fe4db86c340f687dfea5e96194e</sys_ui_section>
+            <sys_updated_by>darrin.achtman@snc</sys_updated_by>
+            <sys_updated_on>2018-02-05 20:04:53</sys_updated_on>
+            <sys_user/>
+            <type/>
+        </sys_ui_element>
+        <sys_ui_element action="INSERT_OR_UPDATE">
+            <element>when_to_occur</element>
+            <position>9</position>
+            <sys_created_by>darrin.achtman@snc</sys_created_by>
+            <sys_created_on>2018-02-05 20:04:53</sys_created_on>
+            <sys_id>25ac6c6adbcc1b00f687dfea5e9619df</sys_id>
+            <sys_mod_count>0</sys_mod_count>
+            <sys_ui_formatter/>
+            <sys_ui_section caption="NULL" display_value="" name="x_pisn_stagehand_job" sys_domain="global" view="Default view">2d179fe4db86c340f687dfea5e96194e</sys_ui_section>
+            <sys_updated_by>darrin.achtman@snc</sys_updated_by>
+            <sys_updated_on>2018-02-05 20:04:53</sys_updated_on>
+            <sys_user/>
+            <type/>
+        </sys_ui_element>
+        <sys_ui_element action="INSERT_OR_UPDATE">
+            <element>.split</element>
+            <position>10</position>
+            <sys_created_by>darrin.achtman@snc</sys_created_by>
+            <sys_created_on>2018-02-05 20:04:53</sys_created_on>
+            <sys_id>a5ac6c6adbcc1b00f687dfea5e9619df</sys_id>
+            <sys_mod_count>0</sys_mod_count>
+            <sys_ui_formatter/>
+            <sys_ui_section caption="NULL" display_value="" name="x_pisn_stagehand_job" sys_domain="global" view="Default view">2d179fe4db86c340f687dfea5e96194e</sys_ui_section>
+            <sys_updated_by>darrin.achtman@snc</sys_updated_by>
+            <sys_updated_on>2018-02-05 20:04:53</sys_updated_on>
+            <sys_user/>
+            <type>.split</type>
+        </sys_ui_element>
+        <sys_ui_element action="INSERT_OR_UPDATE">
+            <element>active</element>
+            <position>11</position>
+            <sys_created_by>darrin.achtman@snc</sys_created_by>
+            <sys_created_on>2018-02-05 20:04:53</sys_created_on>
+            <sys_id>29ac6c6adbcc1b00f687dfea5e9619df</sys_id>
+            <sys_mod_count>0</sys_mod_count>
+            <sys_ui_formatter/>
+            <sys_ui_section caption="NULL" display_value="" name="x_pisn_stagehand_job" sys_domain="global" view="Default view">2d179fe4db86c340f687dfea5e96194e</sys_ui_section>
+            <sys_updated_by>darrin.achtman@snc</sys_updated_by>
+            <sys_updated_on>2018-02-05 20:04:53</sys_updated_on>
+            <sys_user/>
+            <type/>
+        </sys_ui_element>
+        <sys_ui_element action="INSERT_OR_UPDATE">
+            <element>order</element>
+            <position>12</position>
+            <sys_created_by>darrin.achtman@snc</sys_created_by>
+            <sys_created_on>2018-02-05 20:04:53</sys_created_on>
+            <sys_id>a9ac6c6adbcc1b00f687dfea5e9619df</sys_id>
+            <sys_mod_count>0</sys_mod_count>
+            <sys_ui_formatter/>
+            <sys_ui_section caption="NULL" display_value="" name="x_pisn_stagehand_job" sys_domain="global" view="Default view">2d179fe4db86c340f687dfea5e96194e</sys_ui_section>
+            <sys_updated_by>darrin.achtman@snc</sys_updated_by>
+            <sys_updated_on>2018-02-05 20:04:53</sys_updated_on>
+            <sys_user/>
+            <type/>
+        </sys_ui_element>
+        <sys_ui_element action="INSERT_OR_UPDATE">
+            <element>parent</element>
+            <position>13</position>
+            <sys_created_by>darrin.achtman@snc</sys_created_by>
+            <sys_created_on>2018-02-05 20:04:53</sys_created_on>
+            <sys_id>2dac6c6adbcc1b00f687dfea5e9619df</sys_id>
+            <sys_mod_count>0</sys_mod_count>
+            <sys_ui_formatter/>
+            <sys_ui_section caption="NULL" display_value="" name="x_pisn_stagehand_job" sys_domain="global" view="Default view">2d179fe4db86c340f687dfea5e96194e</sys_ui_section>
+            <sys_updated_by>darrin.achtman@snc</sys_updated_by>
+            <sys_updated_on>2018-02-05 20:04:53</sys_updated_on>
+            <sys_user/>
+            <type/>
+        </sys_ui_element>
+        <sys_ui_element action="INSERT_OR_UPDATE">
+            <element>definition</element>
+            <position>14</position>
+            <sys_created_by>darrin.achtman@snc</sys_created_by>
+            <sys_created_on>2018-02-05 20:04:53</sys_created_on>
+            <sys_id>adac6c6adbcc1b00f687dfea5e9619df</sys_id>
+            <sys_mod_count>0</sys_mod_count>
+            <sys_ui_formatter/>
+            <sys_ui_section caption="NULL" display_value="" name="x_pisn_stagehand_job" sys_domain="global" view="Default view">2d179fe4db86c340f687dfea5e96194e</sys_ui_section>
+            <sys_updated_by>darrin.achtman@snc</sys_updated_by>
+            <sys_updated_on>2018-02-05 20:04:53</sys_updated_on>
+            <sys_user/>
+            <type/>
+        </sys_ui_element>
+        <sys_ui_section action="INSERT_OR_UPDATE">
+            <caption/>
+            <header>false</header>
+            <name>x_pisn_stagehand_job</name>
+            <roles/>
+            <sys_class_name>sys_ui_section</sys_class_name>
+            <sys_created_by>darrin.achtman@snc</sys_created_by>
+            <sys_created_on>2017-10-23 17:16:06</sys_created_on>
+            <sys_domain>global</sys_domain>
+            <sys_domain_path>/</sys_domain_path>
+            <sys_id>2d179fe4db86c340f687dfea5e96194e</sys_id>
+            <sys_mod_count>1</sys_mod_count>
+            <sys_name>x_pisn_stagehand_job</sys_name>
+            <sys_overrides/>
+            <sys_package display_value="Stagehand 2" source="x_pisn_stagehand">798fc70adb742340b9e331d0ef961904</sys_package>
+            <sys_policy/>
+            <sys_scope display_value="Stagehand 2">798fc70adb742340b9e331d0ef961904</sys_scope>
+            <sys_update_name>sys_ui_section_2d179fe4db86c340f687dfea5e96194e</sys_update_name>
+            <sys_updated_by>darrin.achtman@snc</sys_updated_by>
+            <sys_updated_on>2018-09-28 21:53:01</sys_updated_on>
+            <sys_user/>
+            <title>true</title>
+            <view display_value="Default view" name="NULL">Default view</view>
+            <view_name/>
+        </sys_ui_section>
+    </sys_ui_section>
+</record_update>
