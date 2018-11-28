@@ -23,14 +23,14 @@
         <sys_created_by>darrin.achtman@snc</sys_created_by>
         <sys_created_on>2018-09-28 21:37:48</sys_created_on>
         <sys_id>798fc70adb742340b9e331d0ef961904</sys_id>
-        <sys_mod_count>7</sys_mod_count>
+        <sys_mod_count>8</sys_mod_count>
         <sys_updated_by>darrin.achtman@snc</sys_updated_by>
-        <sys_updated_on>2018-11-13 16:58:03</sys_updated_on>
+        <sys_updated_on>2018-11-28 22:07:38</sys_updated_on>
         <template/>
         <trackable>true</trackable>
         <user_role/>
         <vendor>PI - ServiceNow</vendor>
         <vendor_prefix/>
-        <version>1.0.6</version>
+        <version>1.0.7</version>
     </sys_app>
 </record_update>

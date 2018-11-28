@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?><record_update table="sys_cors_rule">
+    <sys_cors_rule action="INSERT_OR_UPDATE">
+        <delete>true</delete>
+        <domain>*.service-now.com</domain>
+        <exposed_headers/>
+        <get>true</get>
+        <max_age>0</max_age>
+        <name>Solution Center</name>
+        <patch>true</patch>
+        <post>true</post>
+        <put>true</put>
+        <rest_api>6b7fc9eedb9683002e5df2b6ae961936</rest_api>
+        <sys_class_name>sys_cors_rule</sys_class_name>
+        <sys_created_by>darrin.achtman@snc</sys_created_by>
+        <sys_created_on>2018-11-28 22:07:18</sys_created_on>
+        <sys_id>5c7e11bddb0a6f00e049f5861d9619a4</sys_id>
+        <sys_mod_count>0</sys_mod_count>
+        <sys_name>Solution Center</sys_name>
+        <sys_package display_value="Stagehand 2" source="x_pisn_stagehand">798fc70adb742340b9e331d0ef961904</sys_package>
+        <sys_policy/>
+        <sys_scope display_value="Stagehand 2">798fc70adb742340b9e331d0ef961904</sys_scope>
+        <sys_update_name>sys_cors_rule_5c7e11bddb0a6f00e049f5861d9619a4</sys_update_name>
+        <sys_updated_by>darrin.achtman@snc</sys_updated_by>
+        <sys_updated_on>2018-11-28 22:07:18</sys_updated_on>
+    </sys_cors_rule>
+</record_update>
